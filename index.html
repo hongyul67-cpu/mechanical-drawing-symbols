@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기계제도 기호 마스터</title>
+<style>
+  :root{
+    --bg:#0f1319; --panel:#171c25; --panel2:#1f2531; --line:#2c3442;
+    --text:#e8ecf3; --sub:#8a94a6; --accent:#f59e0b; --accent2:#38bdf8;
+    --good:#34d399; --bad:#f87171; --warn:#fbbf24;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Pretendard","Segoe UI",-apple-system,sans-serif;
+    min-height:100vh; padding:20px 14px 60px; line-height:1.6;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+  header{margin-bottom:18px;}
+  h1{font-size:23px;margin:0 0 4px;font-weight:800;letter-spacing:-.2px;}
+  h1 span{color:var(--accent);}
+  .sub{color:var(--sub);font-size:13px;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;}
+  .hidden{display:none !important;}
+
+  /* ---- 홈 ---- */
+  .home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
+  .card{
+    background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:18px;
+    cursor:pointer;transition:.15s;text-align:left;color:var(--text);font-family:inherit;
+  }
+  .card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .card .ico{font-size:30px;}
+  .card h3{margin:8px 0 4px;font-size:16px;}
+  .card p{margin:0;color:var(--sub);font-size:12.5px;}
+  .bar{height:6px;background:#0c0f14;border-radius:99px;margin-top:12px;overflow:hidden;}
+  .bar i{display:block;height:100%;background:var(--good);width:0;transition:width .4s;}
+  .bar-t{font-size:11px;color:var(--sub);margin-top:5px;}
+
+  /* ---- 공통 UI ---- */
+  .topnav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+  .btn{border:none;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;}
+  .btn-p{background:var(--accent);color:#231604;}
+  .btn-p:hover{filter:brightness(1.1);}
+  .btn-g{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .btn-g:hover{border-color:var(--sub);}
+  .btn-s{background:var(--accent2);color:#04222e;}
+  .btn:disabled{opacity:.45;cursor:default;}
+  .spacer{flex:1;}
+  .tag{font-size:11.5px;color:var(--sub);background:var(--panel2);border:1px solid var(--line);
+       padding:4px 10px;border-radius:99px;}
+
+  .seg{display:flex;gap:4px;background:var(--panel2);padding:4px;border-radius:10px;flex-wrap:wrap;}
+  .seg button{border:none;background:transparent;color:var(--sub);padding:7px 13px;border-radius:7px;
+    font-size:12.5px;cursor:pointer;font-weight:700;font-family:inherit;}
+  .seg button.on{background:var(--accent);color:#231604;}
+
+  /* ---- 배우기 카드 ---- */
+  .learn{display:grid;gap:12px;}
+  .lcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .lcard h4{margin:0 0 8px;font-size:15px;color:var(--accent);}
+  .lcard p{margin:0 0 8px;font-size:13.5px;}
+  .lcard ul{margin:6px 0 0;padding-left:18px;font-size:13px;}
+  .lcard li{margin-bottom:4px;}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px;margin-top:8px;}
+  .kv b{color:var(--accent2);white-space:nowrap;}
+  .formula{background:#0c0f14;border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-family:"Consolas",monospace;font-size:13px;margin:8px 0;color:#cfe3ff;overflow-x:auto;}
+  .note{font-size:12px;color:var(--sub);border-left:3px solid var(--accent);padding-left:10px;margin-top:8px;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:center;}
+  th{background:var(--panel2);color:var(--accent2);}
+  .tscroll{overflow-x:auto;}
+
+  /* ---- 기호 ---- */
+  .symgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px;}
+  .sym{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center;}
+  .sym svg{display:block;margin:0 auto 6px;}
+  .sym .nm{font-size:12.5px;font-weight:700;}
+  .sym .dt{font-size:11px;color:var(--sub);margin-top:2px;}
+
+  /* ---- 문제 ---- */
+  .q{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:18px;}
+  .qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .qnum{font-size:12px;color:var(--sub);font-weight:700;}
+  .qtext{font-size:16px;font-weight:700;margin-bottom:14px;line-height:1.5;}
+  .qfig{text-align:center;margin:12px 0;}
+  .opts{display:grid;gap:9px;}
+  .opt{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+    cursor:pointer;font-size:14px;text-align:left;color:var(--text);font-family:inherit;
+    display:flex;align-items:center;gap:10px;transition:.12s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--accent);}
+  .opt .mk{width:24px;height:24px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+  .opt.ok{border-color:var(--good);background:rgba(52,211,153,.12);}
+  .opt.no{border-color:var(--bad);background:rgba(248,113,113,.1);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:14px;padding:13px 15px;border-radius:10px;font-size:13.5px;display:none;line-height:1.6;}
+  .fb.ok{display:block;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.35);color:var(--good);}
+  .fb.no{display:block;background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.3);color:#fca5a5;}
+  .fb b{color:var(--text);}
+
+  .prog{height:7px;background:#0c0f14;border-radius:99px;overflow:hidden;margin:10px 0 4px;}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s;}
+
+  /* ---- 결과 ---- */
+  .result{text-align:center;padding:26px 18px;}
+  .result .big{font-size:52px;}
+  .result h2{margin:8px 0;font-size:22px;}
+  .score-ring{font-size:40px;font-weight:800;color:var(--accent);}
+  .wrongbox{text-align:left;margin-top:18px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:10px;padding:14px;font-size:13px;max-height:280px;overflow-y:auto;}
+  .wrongbox h4{margin:0 0 8px;font-size:13px;color:var(--bad);}
+  .wrongbox div{padding:7px 0;border-bottom:1px solid var(--line);}
+  .wrongbox div:last-child{border-bottom:none;}
+
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:var(--panel2);
+    border:1px solid var(--line);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;
+    z-index:999;display:none;box-shadow:0 6px 24px rgba(0,0,0,.4);}
+  .toast.ok{border-color:var(--good);color:var(--good);}
+  .toast.no{border-color:var(--bad);color:#fca5a5;}
+
+  @media (max-width:600px){
+    .qtext{font-size:15px;} h1{font-size:20px;}
+    .opt{font-size:13.5px;padding:11px 12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>기계제도 <span>기호</span> 마스터</h1>
+    <div class="sub">표면 거칠기 · 치수공차와 끼워맞춤 · 기하 공차 — 배우고 나서 문제로 확인하세요</div>
+  </header>
+
+  <!-- ================= 홈 ================= -->
+  <div id="home">
+    <div class="panel">
+      <div class="home-grid" id="homeGrid"></div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:15px;font-weight:800;">🏁 종합 점검 (20문항)</div>
+          <div class="sub" style="font-size:12.5px;">세 영역을 섞어서 출제합니다. 결과를 선생님께 제출할 수 있어요.</div>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-p" onclick="startExam()">종합 점검 시작</button>
+      </div>
+      <div class="bar" style="margin-top:12px;"><i id="examBar"></i></div>
+      <div class="bar-t" id="examTxt">아직 응시하지 않았습니다</div>
+    </div>
+  </div>
+
+  <!-- ================= 배우기 ================= -->
+  <div id="learnView" class="hidden">
+    <div class="topnav">
+      <button class="btn btn-g" onclick="goHome()">← 홈</button>
+      <div class="tag" id="learnTitle"></div>
+      <div class="spacer"></div>
+      <button class="btn btn-p" id="toQuizBtn">이 영역 문제 풀기 →</button>
+    </div>
+    <div class="panel"><div class="learn" id="learnBody"></div></div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <button class="btn btn-p" onclick="fromLearnToQuiz()">배웠으니 문제 풀어보기 →</button>
+    </div>
+  </div>
+
+  <!-- ================= 문제 ================= -->
+  <div id="quizView" class="hidden">
+    <div class="topnav">
+      <button class="btn btn-g" onclick="goHome()">← 홈</button>
+      <div class="tag" id="quizTitle"></div>
+      <div class="spacer"></div>
+      <div class="tag" id="quizScore">0점</div>
+    </div>
+    <div class="prog"><i id="quizProg"></i></div>
+    <div class="qnum" id="quizCount" style="margin-bottom:10px;"></div>
+    <div class="q" id="quizBody"></div>
+    <div style="text-align:right;margin-top:14px;">
+      <button class="btn btn-p hidden" id="nextBtn">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ================= 결과 ================= -->
+  <div id="resultView" class="hidden">
+    <div class="panel result">
+      <div class="big" id="rEmoji">🎉</div>
+      <h2 id="rTitle"></h2>
+      <div class="score-ring" id="rScore"></div>
+      <div class="sub" id="rSub" style="margin-top:6px;"></div>
+      <div id="rWrong"></div>
+      <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-g" onclick="goHome()">홈으로</button>
+        <button class="btn btn-s" id="retryBtn">다시 풀기</button>
+        <button class="btn btn-p hidden" id="rcSubmitBtn" onclick="rcSubmit()">🧑‍🏫 선생님께 제출</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================================================================
+   기계제도 기호 마스터
+   출처: 기계제도(2015 개정, 서울교과서) Ⅰ단원 6·7·8절 / KS B 0401,
+        KS B ISO 4287, KS A ISO 1101
+   ================================================================== */
+
+/* ---------- 기하공차 기호 SVG ---------- */
+function gsvg(id, size){
+  const s = size||46, h = s/2;
+  const S = (inner)=>`<svg width="${s}" height="${s}" viewBox="0 0 46 46">
+    <g fill="none" stroke="#e8ecf3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+  switch(id){
+    case 'straight':  return S(`<line x1="7" y1="23" x2="39" y2="23"/>`);
+    case 'flat':      return S(`<path d="M14 32 L36 32 L32 14 L10 14 Z"/>`);
+    case 'round':     return S(`<circle cx="23" cy="23" r="13"/>`);
+    case 'cylinder':  return S(`<circle cx="23" cy="23" r="10"/><line x1="9" y1="36" x2="16" y2="10"/><line x1="30" y1="36" x2="37" y2="10"/>`);
+    case 'lineprof':  return S(`<path d="M8 29 Q23 8 38 29"/>`);
+    case 'surfprof':  return S(`<path d="M8 30 Q23 9 38 30"/><line x1="6" y1="36" x2="40" y2="36"/>`);
+    case 'parallel':  return S(`<line x1="15" y1="34" x2="23" y2="12"/><line x1="26" y1="34" x2="34" y2="12"/>`);
+    case 'perp':      return S(`<line x1="23" y1="10" x2="23" y2="34"/><line x1="10" y1="34" x2="36" y2="34"/>`);
+    case 'angle':     return S(`<line x1="9" y1="34" x2="37" y2="34"/><line x1="9" y1="34" x2="33" y2="13"/>`);
+    case 'position':  return S(`<circle cx="23" cy="23" r="11"/><line x1="23" y1="6" x2="23" y2="40"/><line x1="6" y1="23" x2="40" y2="23"/>`);
+    case 'concentric':return S(`<circle cx="23" cy="23" r="13"/><circle cx="23" cy="23" r="6"/>`);
+    case 'symmetry':  return S(`<line x1="10" y1="15" x2="36" y2="15"/><line x1="10" y1="23" x2="36" y2="23"/><line x1="10" y1="31" x2="36" y2="31"/>`);
+    case 'runout':    return S(`<line x1="10" y1="34" x2="34" y2="12"/><path d="M25 12 L34 12 L34 21"/>`);
+    case 'totalrun':  return S(`<line x1="6" y1="34" x2="30" y2="12"/><path d="M21 12 L30 12 L30 21"/>
+                                <line x1="16" y1="34" x2="40" y2="12"/><path d="M31 12 L40 12 L40 21"/>`);
+    case 'datum':     return S(`<line x1="23" y1="8" x2="23" y2="26"/><path d="M23 26 L16 38 L30 38 Z" fill="#e8ecf3"/><line x1="12" y1="38" x2="34" y2="38"/>`);
+  }
+  return '';
+}
+
+/* 표면의 결 지시 기호 — 기본 √ 에 표시를 더해 제거 가공 여부를 나타냄 */
+function surfSym(kind){
+  // 짧은 다리(8,28)→(18,42), 긴 다리(18,42)→(36,8), 그 끝에서 수평 팔
+  const legs = `<path d="M8 28 L18 42 L36 8 L66 8"/>`;
+  let extra = '';
+  if(kind==='must') extra = `<line x1="8" y1="28" x2="25.4" y2="28"/>`;   // 두 다리를 이어 삼각형을 닫음
+  if(kind==='no')   extra = `<circle cx="21" cy="22" r="6.5"/>`;           // V 안에 원
+  return `<svg width="72" height="50" viewBox="0 0 72 50">
+    <g fill="none" stroke="#e8ecf3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      ${legs}${extra}
+    </g></svg>`;
+}
+
+/* 다듬질(삼각) 기호 */
+function triSym(n){
+  let out='';
+  for(let i=0;i<n;i++){
+    const x=8+i*15;
+    out+=`<path d="M${x} 32 L${x+11} 32 L${x+5.5} 16 Z" fill="none" stroke="#e8ecf3" stroke-width="2"/>`;
+  }
+  if(n===0) out=`<path d="M8 26 q6 -8 12 0 q6 8 12 0" fill="none" stroke="#e8ecf3" stroke-width="2"/>`;
+  return `<svg width="${Math.max(70,n*15+20)}" height="42" viewBox="0 0 ${Math.max(70,n*15+20)} 42">${out}</svg>`;
+}
+
+/* ---------- 데이터: 기하 공차 14종 ---------- */
+const GEO = [
+  {id:'straight',  nm:'진직도',      cat:'모양', datum:false, desc:'직선이 얼마나 곧은지'},
+  {id:'flat',      nm:'평면도',      cat:'모양', datum:false, desc:'평면이 얼마나 평평한지'},
+  {id:'round',     nm:'진원도',      cat:'모양', datum:false, desc:'원이 얼마나 정확한 원인지'},
+  {id:'cylinder',  nm:'원통도',      cat:'모양', datum:false, desc:'원통이 얼마나 정확한 원통인지'},
+  {id:'lineprof',  nm:'선의 윤곽도', cat:'모양', datum:false, desc:'선의 윤곽이 이상 형상에 가까운 정도'},
+  {id:'surfprof',  nm:'면의 윤곽도', cat:'모양', datum:false, desc:'면의 윤곽이 이상 형상에 가까운 정도'},
+  {id:'parallel',  nm:'평행도',      cat:'자세', datum:true,  desc:'데이텀에 대해 얼마나 평행한지'},
+  {id:'perp',      nm:'직각도',      cat:'자세', datum:true,  desc:'데이텀에 대해 얼마나 직각인지'},
+  {id:'angle',     nm:'경사도',      cat:'자세', datum:true,  desc:'데이텀에 대해 지정 각도를 얼마나 지키는지'},
+  {id:'position',  nm:'위치도',      cat:'위치', datum:true,  desc:'정해진 위치에서 얼마나 벗어났는지'},
+  {id:'concentric',nm:'동심도(동축도)',cat:'위치',datum:true, desc:'중심(축)이 얼마나 일치하는지'},
+  {id:'symmetry',  nm:'대칭도',      cat:'위치', datum:true,  desc:'데이텀 중심에 대해 얼마나 대칭인지'},
+  {id:'runout',    nm:'원주 흔들림', cat:'흔들림',datum:true, desc:'1회전 시 특정 위치에서의 흔들림'},
+  {id:'totalrun',  nm:'온 흔들림',   cat:'흔들림',datum:true, desc:'전체 면에 걸친 흔들림'}
+];
+
+/* ---------- 데이터: IT 기본 공차 (KS B 0401, 단위 µm) ---------- */
+const IT_TABLE = {
+  //  기준치수 구분      IT5 IT6 IT7 IT8 IT9 IT10 IT11
+  '3 이하':      {5:4, 6:6,  7:10, 8:14, 9:25, 10:40, 11:60},
+  '3~6':         {5:5, 6:8,  7:12, 8:18, 9:30, 10:48, 11:75},
+  '6~10':        {5:6, 6:9,  7:15, 8:22, 9:36, 10:58, 11:90},
+  '10~18':       {5:8, 6:11, 7:18, 8:27, 9:43, 10:70, 11:110},
+  '18~30':       {5:9, 6:13, 7:21, 8:33, 9:52, 10:84, 11:130},
+  '30~50':       {5:11,6:16, 7:25, 8:39, 9:62, 10:100,11:160},
+  '50~80':       {5:13,6:19, 7:30, 8:46, 9:74, 10:120,11:190},
+  '80~120':      {5:15,6:22, 7:35, 8:54, 9:87, 10:140,11:220}
+};
+
+/* ---------- 다듬질 기호 대응 (KS) ---------- */
+const FINISH = [
+  {tri:0, code:'~',  nm:'가공하지 않음',  ra:'—',        n:'—',      use:'주조·단조 표면 그대로'},
+  {tri:1, code:'w',  nm:'거친 다듬질',    ra:'25a',      n:'N11',    use:'끼워맞춤이 없는 가공면, 축·핀의 끝면'},
+  {tri:2, code:'x',  nm:'중 다듬질',      ra:'6.3a·12.5a',n:'N9·N10',use:'키 홈 면, 볼트 고정 접촉면, 기어 이끝면'},
+  {tri:3, code:'y',  nm:'상 다듬질',      ra:'0.8a~3.2a',n:'N6~N8',  use:'기어 맞물림 면, 미끄럼 베어링 안지름'},
+  {tri:4, code:'z',  nm:'정밀 다듬질',    ra:'0.05a~0.4a',n:'N2~N5', use:'볼·롤러 외면, 정밀 미끄럼 접촉면'}
+];
+
+/* ================= 배우기 콘텐츠 ================= */
+const LEARN = {
+  surf:{
+    title:'표면 거칠기와 표면의 결 기호',
+    cards:[
+      {h:'표면 거칠기란?', html:`
+        <p>기계 가공을 하면 표면에 반드시 미세한 <b>요철(울퉁불퉁함)</b>이 생깁니다.
+        이 요철이 심하면 조립 후 <b>심한 마모·작동 불량</b>이 생기므로, 부품의 용도에 맞게 거칠기를 규정합니다.</p>
+        <div class="note">필요 이상으로 매끄럽게 다듬는 것은 <b>비경제적</b>입니다. 용도에 맞는 값을 지정하는 것이 핵심.</div>
+        <div class="kv">
+          <b>표면 형상</b><span>가공물의 휨, 공작기계 안내면 변형 때문에 생김</span>
+          <b>파상도</b><span>기계의 진동·떨림 때문에 생기는 표면의 기복</span>
+          <b>표면 거칠기</b><span>작은 간격으로 나타나는 미세한 요철</span>
+        </div>`},
+      {h:'거칠기를 나타내는 3가지 값 (KS B ISO 4287)', html:`
+        <div class="kv">
+          <b>Ra (산술평균거칠기)</b><span>기준 길이에서 중심선 윗부분 면적을 길이로 나눈 값. <b>도면에 별도 지정이 없으면 Ra</b></span>
+          <b>Ry (최대높이거칠기)</b><span>가장 높은 산과 가장 깊은 골의 <b>높이 차</b> (Ry = Rp + Rv)</span>
+          <b>Rz (10점평균거칠기)</b><span>높은 봉우리 5개와 깊은 골 5개의 평균값 차</span>
+        </div>
+        <div class="note">단위는 모두 <b>마이크로미터(µm)</b>. 값이 <b>작을수록 매끄러운</b> 면입니다.</div>`},
+      {h:'컷오프와 기준 길이', html:`
+        <p><b>컷오프 값</b>은 파상도와 거칠기를 분리하는 필터 값으로, 실제 측정에서는 컷오프 값으로 <b>기준 길이</b>를 잡습니다.</p>
+        <ul>
+          <li>컷오프 종류: 0.08 · 0.25 · 0.8 · 2.5 · 8 · 25 mm</li>
+          <li>기준 길이를 어떻게 잡느냐에 따라 측정 결과가 크게 달라짐</li>
+        </ul>`},
+      {h:'다듬질(삼각) 기호와 거칠기 대응', html:`
+        <p>삼각 기호(▽)의 <b>개수가 많을수록 정밀</b>한 다듬질입니다.</p>
+        <div class="tscroll"><table>
+          <tr><th>기호</th><th>구분</th><th>Ra</th><th>N등급</th><th>적용 예</th></tr>
+          ${FINISH.map(f=>`<tr><td>${triSym(f.tri)}</td><td>${f.nm}</td>
+            <td>${f.ra}</td><td>${f.n}</td><td style="text-align:left;font-size:11.5px;">${f.use}</td></tr>`).join('')}
+        </table></div>`},
+      {h:'표면의 결 지시 기호 읽는 법', html:`
+        <p>기본 기호는 60°로 벌어진 <b>V자 모양</b>이며, 여기에 표시를 더해 가공 방법을 지시합니다.</p>
+        <div class="symgrid">
+          <div class="sym">${surfSym('basic')}<div class="nm">기본 기호</div>
+            <div class="dt">표면을 지시하는 기본형</div></div>
+          <div class="sym">${surfSym('must')}<div class="nm">제거 가공 필요</div>
+            <div class="dt">절삭 등으로 반드시 가공</div></div>
+          <div class="sym">${surfSym('no')}<div class="nm">제거 가공 금지</div>
+            <div class="dt">주조면 등을 그대로 유지</div></div>
+        </div>
+        <div class="note">기호 주위 위치별로 거칠기 값·가공 방법·컷오프·줄무늬 방향 등을 기입합니다.</div>`}
+    ]
+  },
+  tol:{
+    title:'치수 공차와 끼워맞춤',
+    cards:[
+      {h:'치수 공차 용어', html:`
+        <p><b>치수 공차</b> = 최대 허용 치수 − 최소 허용 치수. 즉 <b>허용되는 오차의 폭</b>입니다.</p>
+        <div class="kv">
+          <b>기준 치수</b><span>도면에 지시된 치수. 공차를 정할 때 기준이 되는 치수</span>
+          <b>실 치수</b><span>실제로 측정한 치수</span>
+          <b>최대 허용 치수</b><span>허용할 수 있는 가장 큰 실 치수</span>
+          <b>최소 허용 치수</b><span>허용할 수 있는 가장 작은 실 치수</span>
+          <b>위 치수 허용차</b><span>최대 허용 치수 − 기준 치수</span>
+          <b>아래 치수 허용차</b><span>최소 허용 치수 − 기준 치수</span>
+        </div>
+        <div class="formula">치수 공차 = 최대 허용 치수 − 최소 허용 치수
+          = 위 치수 허용차 − 아래 치수 허용차</div>`},
+      {h:'IT 기본 공차 (KS B 0401)', html:`
+        <p><b>IT</b>(International Tolerance) 기본 공차는 ISO 방식에 따라
+        <b>IT01, IT0, IT1 … IT18까지 20등급</b>으로 나눕니다.</p>
+        <div class="note">기준 치수가 <b>크고</b> IT 등급이 <b>높을수록</b> 공차가 <b>커집니다</b>.</div>
+        <div class="kv">
+          <b>IT01~IT4</b><span>게이지 제작 공차</span>
+          <b>IT5~IT10</b><span>끼워맞춤 공차</span>
+          <b>IT11~IT18</b><span>끼워맞춤 이외의 공차</span>
+        </div>
+        <div class="tscroll"><table>
+          <tr><th>기준 치수(mm)</th><th>IT5</th><th>IT6</th><th>IT7</th><th>IT8</th><th>IT9</th><th>IT10</th><th>IT11</th></tr>
+          ${Object.entries(IT_TABLE).map(([k,v])=>`<tr><td>${k}</td>${[5,6,7,8,9,10,11].map(g=>`<td>${v[g]}</td>`).join('')}</tr>`).join('')}
+        </table></div>
+        <div class="note">표의 수치 단위는 <b>µm</b> (0.001mm)</div>`},
+      {h:'구멍 기준 / 축 기준 끼워맞춤', html:`
+        <div class="kv">
+          <b>구멍 기준식</b><span>구멍(<b>H</b>)을 기준으로 고정하고, 축의 기호를 바꿔 틈새·죔새를 얻음 <span style="color:var(--accent)">(주로 사용)</span></span>
+          <b>축 기준식</b><span>축(<b>h</b>)을 기준으로 고정하고, 구멍의 기호를 바꿔 얻음</span>
+        </div>
+        <div class="note">대문자(H, G, P…) = <b>구멍</b>, 소문자(h, g, p…) = <b>축</b>.
+        예) <b>φ45 H7/g6</b> → 구멍 H7, 축 g6인 구멍 기준 끼워맞춤</div>`},
+      {h:'끼워맞춤 3가지 상태', html:`
+        <div class="kv">
+          <b>헐거운 끼워맞춤</b><span>구멍 &gt; 축 → <b>항상 틈새</b>. 미끄럼·회전 운동 부품에 적용</span>
+          <b>억지 끼워맞춤</b><span>구멍 &lt; 축 → <b>항상 죔새</b>. 분해·조립하지 않는 부품에 적용</span>
+          <b>중간 끼워맞춤</b><span>틈새가 생길 수도, 죔새가 생길 수도 있음</span>
+        </div>
+        <div class="formula">최소 틈새 = 구멍의 최소 허용 치수 − 축의 최대 허용 치수
+최대 틈새 = 구멍의 최대 허용 치수 − 축의 최소 허용 치수
+최소 죔새 = 축의 최소 허용 치수 − 구멍의 최대 허용 치수
+최대 죔새 = 축의 최대 허용 치수 − 구멍의 최소 허용 치수</div>`},
+      {h:'계산 예제 — φ45 H7/g6', html:`
+        <p>교과서 예제입니다. 표에서 φ45는 <b>30~50</b> 구간이므로 IT7 = 25µm, IT6 = 16µm.</p>
+        <div class="formula">구멍 φ45H7 : 위 +0.025 / 아래 0
+   → 최대 45.025 , 최소 45.000
+
+축   φ45g6 : 위 −0.009 / 아래 −0.025
+   → 최대 44.991 , 최소 44.975
+
+최소 틈새 = 45.000 − 44.991 = <b>0.009</b>
+최대 틈새 = 45.025 − 44.975 = <b>0.050</b></div>
+        <div class="note">틈새만 있고 죔새가 없으므로 → <b>헐거운 끼워맞춤</b></div>`}
+    ]
+  },
+  geo:{
+    title:'기하 공차',
+    cards:[
+      {h:'기하 공차란?', html:`
+        <p>치수 공차만으로는 부품의 <b>모양·자세·위치·흔들림</b>의 정밀도를 규제할 수 없습니다.
+        이를 지시하는 것이 기하 공차입니다.</p>
+        <div class="kv">
+          <b>단독 형체</b><span>데이텀이 <b>필요 없는</b> 형체 (모양 공차)</span>
+          <b>관련 형체</b><span>데이텀이 <b>필요한</b> 형체 (자세·위치·흔들림 공차)</span>
+          <b>데이텀</b><span>기하 공차를 지시할 때의 <b>기준</b>. 영어 대문자를 정사각형으로 둘러싸 표시</span>
+        </div>`},
+      {h:'기하 공차 14종 한눈에', html:`
+        <div class="symgrid">
+        ${GEO.map(g=>`<div class="sym">${gsvg(g.id)}
+          <div class="nm">${g.nm}</div>
+          <div class="dt">${g.cat} · 데이텀 ${g.datum?'필요':'불필요'}</div></div>`).join('')}
+        </div>`},
+      {h:'분류별 정리', html:`
+        <div class="tscroll"><table>
+          <tr><th>분류</th><th>형체</th><th>데이텀</th><th>공차 종류</th></tr>
+          <tr><td>모양 공차</td><td>단독 형체</td><td>불필요</td>
+              <td style="text-align:left">진직도 · 평면도 · 진원도 · 원통도 · 선의 윤곽도 · 면의 윤곽도</td></tr>
+          <tr><td>자세 공차</td><td>관련 형체</td><td>필요</td>
+              <td style="text-align:left">평행도 · 직각도 · 경사도</td></tr>
+          <tr><td>위치 공차</td><td>관련 형체</td><td>필요</td>
+              <td style="text-align:left">위치도 · 동심도(동축도) · 대칭도</td></tr>
+          <tr><td>흔들림 공차</td><td>관련 형체</td><td>필요</td>
+              <td style="text-align:left">원주 흔들림 · 온 흔들림</td></tr>
+        </table></div>
+        <div class="note">윤곽도는 데이텀 없이도, 데이텀과 함께도 쓸 수 있습니다(교과서 기준 단독 형체로 분류).</div>`},
+      {h:'공차 기입 틀 읽는 법', html:`
+        <p>직사각형 틀을 나누어 <b>기호 → 공차값 → 데이텀</b> 순으로 기입합니다.</p>
+        <div class="qfig">
+          <svg width="230" height="52" viewBox="0 0 230 52">
+            <g fill="none" stroke="#e8ecf3" stroke-width="2">
+              <rect x="4" y="10" width="42" height="32"/>
+              <rect x="46" y="10" width="86" height="32"/>
+              <rect x="132" y="10" width="42" height="32"/>
+            </g>
+            <g transform="translate(11,3)">${gsvg('perp',30)}</g>
+            <text x="60" y="32" fill="#f59e0b" font-size="16" font-weight="700">0.011</text>
+            <text x="146" y="32" fill="#38bdf8" font-size="16" font-weight="700">A</text>
+            <text x="180" y="20" fill="#8a94a6" font-size="10">← 데이텀</text>
+            <text x="180" y="36" fill="#8a94a6" font-size="10">← 공차값</text>
+          </svg>
+        </div>
+        <div class="kv">
+          <b>φ가 붙으면</b><span>공차 영역이 <b>원통(원)</b> 모양임을 뜻함 (예: φ0.02)</span>
+          <b>여러 공차</b><span>한 형체에 두 종류 이상이면 틀을 <b>상하로 겹쳐</b> 기입</span>
+          <b>0.008/50</b><span>임의의 <b>50mm 길이</b>에 대해 0.008의 공차</span>
+        </div>`}
+    ]
+  }
+};
+
+/* ================= 문제 은행 ================= */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function pickWrong(pool, right, n){ return shuffle(pool.filter(x=>x!==right)).slice(0,n); }
+
+function bankSurf(){
+  const Q=[];
+  Q.push({q:'도면에 표면 거칠기 값이 <b>별도 지정 없이</b> 표시되어 있을 때, 기본이 되는 값은?',
+    opts:['Ra (산술평균거칠기)','Ry (최대높이거칠기)','Rz (10점평균거칠기)','Rq (제곱평균거칠기)'],a:0,
+    ex:'기계 도면에서 별도로 지정하지 않는 한 표면 거칠기 값은 <b>산술 평균 거칠기 Ra</b>입니다.'});
+  Q.push({q:'<b>Ry(최대높이거칠기)</b>를 바르게 설명한 것은?',
+    opts:['가장 높은 산과 가장 깊은 골의 높이 차','중심선 윗부분 면적을 기준 길이로 나눈 값',
+          '봉우리 5개와 골 5개의 평균값 차','거칠기 곡선의 표준편차'],a:0,
+    ex:'Ry = Rp(가장 높은 산) + Rv(가장 깊은 골) 로, <b>최대 높이의 차</b>를 뜻합니다.'});
+  Q.push({q:'<b>Rz(10점평균거칠기)</b>의 계산 방법은?',
+    opts:['가장 높은 봉우리 5개와 가장 깊은 골 5개의 평균값 차','가장 높은 산과 골의 차',
+          '중심선 위 면적 ÷ 기준 길이','컷오프 값 × 기준 길이'],a:0,
+    ex:'봉우리 5개·골 5개, 합쳐서 <b>10점</b>의 평균으로 구하므로 10점 평균 거칠기입니다.'});
+  Q.push({q:'표면 거칠기의 단위로 옳은 것은?',
+    opts:['µm (마이크로미터)','mm (밀리미터)','nm (나노미터)','cm (센티미터)'],a:0,
+    ex:'표면 거칠기 값은 <b>마이크로미터(µm)</b>로 나타냅니다.'});
+  Q.push({q:'기계의 <b>진동이나 떨림</b> 때문에 생기는 표면의 기복을 무엇이라 하는가?',
+    opts:['파상도','표면 형상','표면 거칠기','컷오프'],a:0,
+    ex:'<b>파상도(waviness)</b>는 진동·떨림으로 생기는 기복이고, 표면 형상은 휨·변형, 거칠기는 미세 요철입니다.'});
+  Q.push({q:'컷오프 값의 종류로 <b>옳지 않은</b> 것은?',
+    opts:['1.0 mm','0.08 mm','0.8 mm','2.5 mm'],a:0,
+    ex:'컷오프 종류는 0.08 · 0.25 · 0.8 · 2.5 · 8 · 25 mm 입니다. 1.0mm는 없습니다.'});
+  Q.push({q:'표면의 결 지시 기호에서 V자에 <b>원(○)</b>이 붙으면 무슨 뜻인가?',
+    opts:['제거 가공을 해서는 안 됨','제거 가공이 필요함','정밀 다듬질을 하라','거칠기 값을 지정하지 않음'],a:0,
+    ex:'원이 붙으면 <b>제거 가공 금지</b>(주조면 등을 그대로 유지). 가로선이 붙으면 <b>제거 가공 필요</b>입니다.'});
+  Q.push({q:'표면의 결 지시 기호에서 V자에 <b>가로선</b>이 붙으면?',
+    opts:['제거 가공이 필요함','제거 가공 금지','표면을 도장하라','열처리를 하라'],a:0,
+    ex:'가로선은 절삭 등 <b>제거 가공이 필요</b>함을 뜻합니다.'});
+  // 다듬질 기호 대응
+  FINISH.filter(f=>f.tri>0).forEach(f=>{
+    Q.push({q:`다듬질 기호 <b>${'▽'.repeat(f.tri)}</b> (${f.tri}개)에 해당하는 다듬질 구분은?`,
+      opts:shuffleKeep(['거친 다듬질','중 다듬질','상 다듬질','정밀 다듬질'], f.nm),a:-1,ansText:f.nm,
+      ex:`▽ ${f.tri}개 = <b>${f.nm}</b> (Ra ${f.ra}, ${f.n})<br>적용 예: ${f.use}`});
+  });
+  Q.push({q:'삼각 기호(▽)의 <b>개수가 많아지면</b> 표면은 어떻게 되는가?',
+    opts:['더 정밀(매끄러움)해진다','더 거칠어진다','변화 없다','가공비가 줄어든다'],a:0,
+    ex:'▽ 개수가 많을수록 <b>정밀한 다듬질</b>이며, 그만큼 가공비는 올라갑니다.'});
+  Q.push({q:'필요 이상으로 표면을 매끄럽게 다듬는 것이 바람직하지 않은 이유는?',
+    opts:['비경제적이기 때문','강도가 떨어지기 때문','치수가 변하기 때문','녹이 슬기 때문'],a:0,
+    ex:'요철 없는 이상적 표면은 생산 공학적으로 불가능하고, 과도한 다듬질은 <b>비경제적</b>입니다.'});
+  return Q;
+}
+
+function bankTol(){
+  const Q=[];
+  Q.push({q:'<b>치수 공차</b>를 바르게 나타낸 식은?',
+    opts:['최대 허용 치수 − 최소 허용 치수','기준 치수 − 실 치수',
+          '위 치수 허용차 + 아래 치수 허용차','최대 허용 치수 + 최소 허용 치수'],a:0,
+    ex:'치수 공차 = 최대 허용 치수 − 최소 허용 치수 = 위 치수 허용차 − 아래 치수 허용차'});
+  Q.push({q:'<b>위 치수 허용차</b>의 정의는?',
+    opts:['최대 허용 치수 − 기준 치수','최소 허용 치수 − 기준 치수',
+          '기준 치수 − 최대 허용 치수','실 치수 − 기준 치수'],a:0,
+    ex:'위 치수 허용차 = <b>최대</b> 허용 치수 − 기준 치수, 아래 치수 허용차 = <b>최소</b> 허용 치수 − 기준 치수'});
+  Q.push({q:'IT 기본 공차는 모두 몇 등급으로 나누는가?',
+    opts:['20등급 (IT01, IT0, IT1 ~ IT18)','18등급 (IT1 ~ IT18)','16등급','24등급'],a:0,
+    ex:'IT01, IT0, IT1 … IT18 까지 <b>20등급</b>입니다. (KS B 0401)'});
+  Q.push({q:'IT 기본 공차에 대한 설명으로 옳은 것은?',
+    opts:['기준 치수가 크고 등급이 높을수록 공차가 커진다','기준 치수와 관계없이 등급만으로 정해진다',
+          '등급이 높을수록 공차가 작아진다','기준 치수가 클수록 공차가 작아진다'],a:0,
+    ex:'기준 치수가 <b>크고</b> IT 등급이 <b>높을수록</b> 공차가 <b>커집니다</b>.'});
+  Q.push({q:'<b>끼워맞춤 공차</b>에 주로 사용하는 IT 등급 범위는?',
+    opts:['IT5 ~ IT10','IT01 ~ IT4','IT11 ~ IT18','IT15 ~ IT18'],a:0,
+    ex:'IT01~IT4는 게이지 제작, <b>IT5~IT10은 끼워맞춤</b>, IT11~IT18은 끼워맞춤 이외의 공차에 씁니다.'});
+  Q.push({q:'구멍의 지름이 축의 지름보다 커서 <b>항상 틈새</b>가 있는 끼워맞춤은?',
+    opts:['헐거운 끼워맞춤','억지 끼워맞춤','중간 끼워맞춤','고정 끼워맞춤'],a:0,
+    ex:'항상 틈새 → <b>헐거운 끼워맞춤</b>. 미끄럼·회전 운동이 필요한 부품에 적용합니다.'});
+  Q.push({q:'구멍의 지름이 축보다 작아 <b>항상 죔새</b>가 생기는 끼워맞춤은?',
+    opts:['억지 끼워맞춤','헐거운 끼워맞춤','중간 끼워맞춤','미끄럼 끼워맞춤'],a:0,
+    ex:'항상 죔새 → <b>억지 끼워맞춤</b>. 분해·조립을 하지 않는 부품에 적용합니다.'});
+  Q.push({q:'<b>회전 운동</b>이 필요한 부품에 적용해야 할 끼워맞춤은?',
+    opts:['헐거운 끼워맞춤','억지 끼워맞춤','중간 끼워맞춤','압입 끼워맞춤'],a:0,
+    ex:'미끄럼·회전 운동에는 틈새가 필요하므로 <b>헐거운 끼워맞춤</b>입니다.'});
+  Q.push({q:'φ45 <b>H7/g6</b> 에서 대문자 H가 뜻하는 것은?',
+    opts:['구멍의 치수 허용차','축의 치수 허용차','기준 치수','IT 등급'],a:0,
+    ex:'<b>대문자 = 구멍</b>, 소문자 = 축. H7은 구멍, g6은 축을 뜻합니다.'});
+  Q.push({q:'φ45H7/g6 처럼 구멍을 H로 고정하고 축을 바꾸는 방식은?',
+    opts:['구멍 기준 끼워맞춤','축 기준 끼워맞춤','혼합 기준 끼워맞춤','자유 끼워맞춤'],a:0,
+    ex:'구멍(H)을 기준으로 고정 → <b>구멍 기준 끼워맞춤</b>. 실무에서 주로 사용합니다.'});
+  Q.push({q:'<b>최소 틈새</b>를 구하는 식으로 옳은 것은?',
+    opts:['구멍의 최소 허용 치수 − 축의 최대 허용 치수','구멍의 최대 허용 치수 − 축의 최소 허용 치수',
+          '축의 최대 허용 치수 − 구멍의 최소 허용 치수','축의 최소 허용 치수 − 구멍의 최대 허용 치수'],a:0,
+    ex:'최소 틈새 = 구멍의 <b>최소</b> − 축의 <b>최대</b> (가장 빡빡한 조합)'});
+  Q.push({q:'<b>최대 죔새</b>를 구하는 식으로 옳은 것은?',
+    opts:['축의 최대 허용 치수 − 구멍의 최소 허용 치수','구멍의 최대 허용 치수 − 축의 최소 허용 치수',
+          '축의 최소 허용 치수 − 구멍의 최대 허용 치수','구멍의 최소 허용 치수 − 축의 최대 허용 치수'],a:0,
+    ex:'최대 죔새 = 축의 <b>최대</b> − 구멍의 <b>최소</b> (가장 꽉 끼는 조합)'});
+  // 계산형 (교과서 예제 기반)
+  Q.push({q:'구멍 φ45H7 = 45.000~45.025, 축 φ45g6 = 44.975~44.991 일 때 <b>최대 틈새</b>는?',
+    opts:['0.050','0.009','0.025','0.016'],a:0,
+    ex:'최대 틈새 = 구멍 최대(45.025) − 축 최소(44.975) = <b>0.050</b>'});
+  Q.push({q:'구멍 φ45H7 = 45.000~45.025, 축 φ45p6 = 45.026~45.042 일 때의 끼워맞춤 상태는?',
+    opts:['억지 끼워맞춤','헐거운 끼워맞춤','중간 끼워맞춤','판단 불가'],a:0,
+    ex:'축의 최소(45.026)가 구멍의 최대(45.025)보다 커서 <b>항상 죔새</b> → 억지 끼워맞춤'});
+  Q.push({q:'구멍 φ45H7 = 45.000~45.025, 축 φ45k6 = 45.002~45.018 일 때의 끼워맞춤 상태는?',
+    opts:['중간 끼워맞춤','헐거운 끼워맞춤','억지 끼워맞춤','고정 끼워맞춤'],a:0,
+    ex:'틈새(최대 0.023)도 죔새(최대 0.018)도 생길 수 있으므로 <b>중간 끼워맞춤</b>'});
+  // IT 표 조회형
+  const rows=[['30~50',7,25],['18~30',6,13],['50~80',7,30],['10~18',7,18],['80~120',6,22]];
+  rows.forEach(([rg,g,val])=>{
+    Q.push({q:`IT 기본 공차표에서 기준 치수 <b>${rg} mm</b> 구간의 <b>IT${g}</b> 공차값은? (단위 µm)`,
+      opts:shuffleKeep([String(val),String(val+6),String(val-4),String(val+13)],String(val)),a:-1,ansText:String(val),
+      ex:`KS B 0401 표에서 ${rg}mm 구간의 IT${g} = <b>${val}µm</b> (= ${(val/1000).toFixed(3)}mm)`});
+  });
+  return Q;
+}
+
+function bankGeo(){
+  const Q=[];
+  // 기호 → 이름
+  GEO.forEach(g=>{
+    Q.push({q:'다음 기하 공차 기호의 <b>이름</b>은?', fig:gsvg(g.id,60),
+      opts:shuffleKeep([g.nm, ...pickWrong(GEO.map(x=>x.nm), g.nm, 3)], g.nm),a:-1,ansText:g.nm,
+      ex:`<b>${g.nm}</b> — ${g.desc} (${g.cat} 공차 · 데이텀 ${g.datum?'필요':'불필요'})`});
+  });
+  // 분류
+  ['진직도','평면도','진원도','원통도','평행도','직각도','경사도','위치도','대칭도','원주 흔들림','온 흔들림'].forEach(nm=>{
+    const g=GEO.find(x=>x.nm===nm||x.nm.startsWith(nm));
+    if(!g) return;
+    Q.push({q:`<b>${g.nm}</b>는 어느 분류에 속하는가?`,
+      opts:shuffleKeep(['모양 공차','자세 공차','위치 공차','흔들림 공차'], g.cat+' 공차'),a:-1,ansText:g.cat+' 공차',
+      ex:`${g.nm}는 <b>${g.cat} 공차</b>입니다. (데이텀 ${g.datum?'필요 — 관련 형체':'불필요 — 단독 형체'})`});
+  });
+  // 데이텀 필요 여부
+  ['평면도','진원도','평행도','직각도','위치도','원주 흔들림'].forEach(nm=>{
+    const g=GEO.find(x=>x.nm===nm);
+    if(!g) return;
+    Q.push({q:`<b>${g.nm}</b> 공차를 지시할 때 <b>데이텀</b>이 필요한가?`,
+      opts:shuffleKeep(['필요하다','필요하지 않다'], g.datum?'필요하다':'필요하지 않다'),a:-1,
+      ansText:g.datum?'필요하다':'필요하지 않다',
+      ex:`${g.nm}는 ${g.cat} 공차로 <b>${g.datum?'관련 형체 — 데이텀 필요':'단독 형체 — 데이텀 불필요'}</b>합니다.`});
+  });
+  Q.push({q:'데이텀이 <b>필요 없는</b> 형체를 무엇이라 하는가?',
+    opts:['단독 형체','관련 형체','기준 형체','복합 형체'],a:0,
+    ex:'데이텀이 필요 없으면 <b>단독 형체</b>(모양 공차), 필요하면 <b>관련 형체</b>입니다.'});
+  Q.push({q:'도면에서 <b>데이텀</b>은 어떻게 표시하는가?',
+    opts:['영어 대문자를 정사각형으로 둘러싸고 삼각 기호를 붙임','소문자를 원으로 둘러쌈',
+          '숫자를 삼각형으로 둘러쌈','한글 자음으로 표시'],a:0,
+    ex:'데이텀은 <b>영어 대문자</b>를 정사각형으로 둘러싸고, 데이텀 삼각 기호에 지시선을 연결해 나타냅니다.'});
+  Q.push({q:'공차 기입 틀에서 공차값 앞에 <b>φ</b>가 붙으면?',
+    opts:['공차 영역이 원(원통) 모양이다','공차값이 지름 치수이다',
+          '데이텀이 원형이다','공차가 2배가 된다'],a:0,
+    ex:'φ가 붙으면 공차 영역이 <b>원통(원)</b> 모양임을 뜻합니다.'});
+  Q.push({q:'한 개의 형체에 <b>두 종류 이상</b>의 기하 공차를 지시할 때의 방법은?',
+    opts:['공차 기입 틀을 상하로 겹쳐서 기입','서로 다른 색으로 기입',
+          '별도의 표에 기입','가장 중요한 것 하나만 기입'],a:0,
+    ex:'두 종류 이상이면 공차 기입 틀을 <b>상하로 겹쳐서</b> 기입합니다.'});
+  Q.push({q:'공차 기입 틀에 <b>0.008/50</b> 이라고 적혀 있다면?',
+    opts:['임의의 50mm 길이에 대해 0.008의 공차','전체 길이 50mm에 0.008의 공차',
+          '0.008mm를 50번 측정하라','공차가 0.008 ÷ 50 이다'],a:0,
+    ex:'‘공차값/특정 길이’ 형식으로, <b>임의의 위치에서 50mm 길이</b>에 대한 공차를 뜻합니다.'});
+  Q.push({q:'기하 공차 기입 틀의 <b>기입 순서</b>로 옳은 것은?',
+    opts:['기호 → 공차값 → 데이텀','공차값 → 기호 → 데이텀',
+          '데이텀 → 기호 → 공차값','기호 → 데이텀 → 공차값'],a:0,
+    ex:'직사각형 틀을 나누어 <b>기하 공차 기호 → 공차값 → 데이텀</b> 순으로 기입합니다.'});
+  return Q;
+}
+
+/* 정답 텍스트를 유지하며 보기 섞기 */
+function shuffleKeep(arr, ans){
+  const uniq=[...new Set(arr)];
+  if(!uniq.includes(ans)) uniq.push(ans);
+  return shuffle(uniq);
+}
+
+const BANK = {surf:bankSurf, tol:bankTol, geo:bankGeo};
+const AREA = {
+  surf:{ico:'🪞', name:'표면 거칠기', desc:'거칠기 값(Ra·Ry·Rz), 다듬질 기호, 표면의 결 지시 기호'},
+  tol: {ico:'📏', name:'치수공차 · 끼워맞춤', desc:'공차 용어, IT 등급, 헐거운·중간·억지 끼워맞춤 계산'},
+  geo: {ico:'⟂',  name:'기하 공차', desc:'14가지 기호, 모양·자세·위치·흔들림, 데이텀'}
+};
+
+/* ================= 상태 ================= */
+let S = {
+  view:'home', area:null, qs:[], idx:0, score:0, wrong:[], answered:false,
+  mode:'area',             // 'area' | 'exam'
+  best:{}, examBest:null, startAt:Date.now()
+};
+try{ const sv=JSON.parse(localStorage.getItem('mdsym')||'{}');
+     S.best=sv.best||{}; S.examBest=sv.examBest||null; }catch(e){}
+function save(){ try{ localStorage.setItem('mdsym', JSON.stringify({best:S.best, examBest:S.examBest})); }catch(e){} }
+
+/* ================= 홈 ================= */
+function renderHome(){
+  const g=document.getElementById('homeGrid');
+  g.innerHTML='';
+  Object.entries(AREA).forEach(([k,a])=>{
+    const b=S.best[k];
+    const el=document.createElement('button');
+    el.className='card';
+    el.innerHTML=`<div class="ico">${a.ico}</div><h3>${a.name}</h3><p>${a.desc}</p>
+      <div class="bar"><i style="width:${b?b.pct:0}%"></i></div>
+      <div class="bar-t">${b?`최고 기록 ${b.correct}/${b.total} (${b.pct}%)`:'아직 풀지 않았습니다 — 먼저 배우기부터'}</div>`;
+    el.onclick=()=>openLearn(k);
+    g.appendChild(el);
+  });
+  const eb=S.examBest;
+  document.getElementById('examBar').style.width=(eb?eb.pct:0)+'%';
+  document.getElementById('examTxt').textContent = eb
+    ? `최고 기록 ${eb.correct}/${eb.total} (${eb.pct}%)` : '아직 응시하지 않았습니다';
+}
+function show(v){
+  ['home','learnView','quizView','resultView'].forEach(id=>
+    document.getElementById(id).classList.toggle('hidden', id!==v));
+  window.scrollTo(0,0);
+}
+function goHome(){ S.view='home'; renderHome(); show('home'); }
+
+/* ================= 배우기 ================= */
+function openLearn(area){
+  S.area=area;
+  const L=LEARN[area];
+  document.getElementById('learnTitle').textContent='📖 배우기 — '+L.title;
+  document.getElementById('learnBody').innerHTML =
+    L.cards.map(c=>`<div class="lcard"><h4>${c.h}</h4>${c.html}</div>`).join('');
+  show('learnView');
+}
+function fromLearnToQuiz(){ startQuiz(S.area); }
+document.getElementById('toQuizBtn').onclick=()=>fromLearnToQuiz();
+
+/* ================= 문제 ================= */
+function startQuiz(area){
+  S.mode='area'; S.area=area;
+  S.qs=shuffle(BANK[area]()).slice(0,12);
+  S.idx=0; S.score=0; S.wrong=[]; S.startAt=Date.now();
+  document.getElementById('quizTitle').textContent=AREA[area].ico+' '+AREA[area].name;
+  show('quizView'); renderQ();
+}
+function startExam(){
+  S.mode='exam'; S.area=null;
+  const per=[shuffle(bankSurf()).slice(0,7), shuffle(bankTol()).slice(0,7), shuffle(bankGeo()).slice(0,6)];
+  S.qs=shuffle([].concat(...per));
+  S.idx=0; S.score=0; S.wrong=[]; S.startAt=Date.now();
+  document.getElementById('quizTitle').textContent='🏁 종합 점검 (20문항)';
+  show('quizView'); renderQ();
+}
+
+function renderQ(){
+  const q=S.qs[S.idx];
+  S.answered=false;
+  document.getElementById('quizCount').textContent=`문제 ${S.idx+1} / ${S.qs.length}`;
+  document.getElementById('quizProg').style.width=(S.idx/S.qs.length*100)+'%';
+  document.getElementById('quizScore').textContent=S.score+'점';
+  document.getElementById('nextBtn').classList.add('hidden');
+
+  const ansText = q.ansText!=null ? q.ansText : q.opts[q.a];
+  const body=document.getElementById('quizBody');
+  body.innerHTML=`<div class="qtext">${q.q}</div>
+    ${q.fig?`<div class="qfig">${q.fig}</div>`:''}
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>`;
+  const wrap=document.getElementById('opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML=`<span class="mk">${String.fromCharCode(65+i)}</span><span>${o}</span>`;
+    b.onclick=()=>answer(i, o===ansText, ansText, q);
+    wrap.appendChild(b);
+  });
+}
+
+function answer(i, correct, ansText, q){
+  if(S.answered) return;
+  S.answered=true;
+  const opts=[...document.querySelectorAll('#opts .opt')];
+  opts.forEach((b,bi)=>{
+    b.disabled=true;
+    const txt=b.querySelector('span:last-child').textContent;
+    if(txt===ansText) b.classList.add('ok');
+    else if(bi===i) b.classList.add('no');
+  });
+  const fb=document.getElementById('fb');
+  if(correct){
+    S.score++;
+    fb.className='fb ok';
+    fb.innerHTML='✅ <b>정답!</b><br>'+q.ex;
+    toast('정답!','ok');
+  }else{
+    S.wrong.push({q:q.q.replace(/<[^>]+>/g,''), ans:ansText});
+    fb.className='fb no';
+    fb.innerHTML=`❌ <b>정답은 «${ansText}»</b><br>`+q.ex;
+    toast('아쉬워요','no');
+  }
+  document.getElementById('quizScore').textContent=S.score+'점';
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+document.getElementById('nextBtn').onclick=()=>{
+  S.idx++;
+  if(S.idx>=S.qs.length) finish(); else renderQ();
+};
+
+/* ================= 결과 ================= */
+function finish(){
+  const total=S.qs.length, pct=Math.round(S.score/total*100);
+  const pass=pct>=70;
+  document.getElementById('rEmoji').textContent = pct>=90?'🏆': pass?'🎉':'💪';
+  document.getElementById('rTitle').textContent = pct>=90?'훌륭해요! 완벽에 가까워요'
+    : pass?'합격! 잘 이해했어요':'조금만 더 연습해요';
+  document.getElementById('rScore').textContent=`${S.score} / ${total} (${pct}%)`;
+  const sec=Math.round((Date.now()-S.startAt)/1000);
+  document.getElementById('rSub').textContent =
+    `${S.mode==='exam'?'종합 점검':AREA[S.area].name} · 소요 시간 ${Math.floor(sec/60)}분 ${sec%60}초`;
+
+  document.getElementById('rWrong').innerHTML = S.wrong.length
+    ? `<div class="wrongbox"><h4>틀린 문제 ${S.wrong.length}개 — 다시 확인하세요</h4>
+       ${S.wrong.map(w=>`<div>• ${w.q}<br><span style="color:var(--good)">→ 정답: ${w.ans}</span></div>`).join('')}</div>`
+    : `<div class="wrongbox" style="color:var(--good)">틀린 문제가 없습니다! 완벽해요 🎯</div>`;
+
+  // 최고 기록 저장
+  const rec={correct:S.score,total:total,pct:pct};
+  if(S.mode==='exam'){ if(!S.examBest||pct>S.examBest.pct) S.examBest=rec; }
+  else { if(!S.best[S.area]||pct>S.best[S.area].pct) S.best[S.area]=rec; }
+  save();
+
+  // 제출 버튼: 종합 점검 + ?rc= 링크일 때만
+  document.getElementById('rcSubmitBtn').classList.toggle('hidden',
+    !(S.mode==='exam' && rcHasEndpoint()));
+  document.getElementById('retryBtn').onclick=()=> S.mode==='exam'?startExam():startQuiz(S.area);
+  show('resultView');
+}
+
+/* ================= 토스트 ================= */
+let tTimer=null;
+function toast(msg,kind){
+  const t=document.getElementById('toast');
+  clearTimeout(tTimer);
+  t.className='toast '+(kind||'');
+  t.textContent=msg; t.style.display='block';
+  tTimer=setTimeout(()=>{t.style.display='none';},1100);
+}
+
+/* ================= 결과 제출 ================= */
+function rcHasEndpoint(){
+  return !!(window.ResultCollector && ResultCollector.config && ResultCollector.config.endpoint);
+}
+function rcSubmit(){
+  if(!rcHasEndpoint()){
+    alert('결과 제출 링크로 접속했을 때만 제출할 수 있어요. (선생님이 나눠준 링크를 사용하세요)');return;
+  }
+  const total=S.qs.length, sec=Math.round((Date.now()-S.startAt)/1000);
+  ResultCollector.open({
+    score:Math.round(S.score/total*100),
+    correct:S.score, total:total,
+    wrong:S.wrong.map(w=>`${w.q} → 정답: ${w.ans}`),
+    durationSec:sec
+  });
+}
+
+/* ================= 시작 ================= */
+renderHome();
+show('home');
+</script>
+<script src="https://hongyul67-cpu.github.io/links/collector.js" data-tool="기계제도 기호 마스터" data-max-num="40"></script>
+</body>
+</html>
