@@ -785,8 +785,7 @@ function finish(){
   save();
 
   // 제출 버튼: 종합 점검 + ?rc= 링크일 때만
-  document.getElementById('rcSubmitBtn').classList.toggle('hidden',
-    !(S.mode==='exam' && rcHasEndpoint()));
+  document.getElementById('rcSubmitBtn').classList.remove('hidden');
   document.getElementById('retryBtn').onclick=()=> S.mode==='exam'?startExam():startQuiz(S.area);
   show('resultView');
 }
@@ -807,14 +806,22 @@ function rcHasEndpoint(){
 }
 function rcSubmit(){
   if(!rcHasEndpoint()){
-    alert('결과 제출 링크로 접속했을 때만 제출할 수 있어요. (선생님이 나눠준 링크를 사용하세요)');return;
+    alert(['이 링크로는 제출이 되지 않아요.','',
+           '선생님이 나눠 준 제출용 링크(주소 뒤에 ?rc=... 가 붙은 링크)로',
+           '들어와야 반·번호를 입력하고 결과를 보낼 수 있습니다.','',
+           '연습은 지금 이대로 계속 하셔도 됩니다.'].join(String.fromCharCode(10)));
+    return;
   }
   const total=S.qs.length, sec=Math.round((Date.now()-S.startAt)/1000);
+  const modeName = '기계제도 기호 — ' + (S.mode==='exam' ? '종합 점검' : AREA[S.area].name);
   ResultCollector.open({
     score:Math.round(S.score/total*100),
     correct:S.score, total:total,
     wrong:S.wrong.map(w=>`${w.q} → 정답: ${w.ans}`),
-    durationSec:sec
+    durationSec:sec,
+    mode:modeName,
+    retry: ResultCollector.bumpTry ? ResultCollector.bumpTry(modeName) : undefined,
+    extra: S.mode==='exam' ? ["기계제도 기호 종합 이해"] : ['기계제도 기호 개념 이해']
   });
 }
 
