@@ -117,6 +117,15 @@
   .wrongbox{text-align:left;margin-top:18px;background:var(--panel2);border:1px solid var(--line);
     border-radius:10px;padding:14px;font-size:13px;max-height:280px;overflow-y:auto;}
   .wrongbox h4{margin:0 0 8px;font-size:13px;color:var(--bad);}
+  /* 오답노트는 그림·해설까지 들어가 길어진다 — 280px 상자 안에 가두지 않는다 */
+  .wrongbox.review{max-height:none;overflow:visible;}
+  .wrongbox .rvcard{border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px;margin:10px 0;text-align:left;}
+  .wrongbox .rvcard div{border-bottom:none;padding:0;}
+  .wrongbox .rvno{font-size:.8rem;opacity:.7;margin-bottom:6px;}
+  .wrongbox .rvrow{font-size:.92rem;margin:4px 0;}
+  .wrongbox .rvrow.ans{font-weight:700;color:var(--good);}
+  .wrongbox .rvex{font-size:.88rem;line-height:1.6;opacity:.9;margin-top:8px;}
+  .wrongbox .qfig{margin:8px 0;}
   .wrongbox div{padding:7px 0;border-bottom:1px solid var(--line);}
   .wrongbox div:last-child{border-bottom:none;}
 
@@ -693,7 +702,7 @@ document.getElementById('toQuizBtn').onclick=()=>fromLearnToQuiz();
 function startQuiz(area){
   S.mode='area'; S.area=area;
   S.qs=shuffle(BANK[area]()).slice(0,12);
-  S.idx=0; S.score=0; S.wrong=[]; S.startAt=Date.now();
+  S.idx=0; S.score=0; S.wrong=[]; S.rev=[]; S.startAt=Date.now();
   document.getElementById('quizTitle').textContent=AREA[area].ico+' '+AREA[area].name;
   show('quizView'); renderQ();
 }
@@ -701,8 +710,8 @@ function startExam(){
   S.mode='exam'; S.area=null;
   const per=[shuffle(bankSurf()).slice(0,7), shuffle(bankTol()).slice(0,7), shuffle(bankGeo()).slice(0,6)];
   S.qs=shuffle([].concat(...per));
-  S.idx=0; S.score=0; S.wrong=[]; S.startAt=Date.now();
-  document.getElementById('quizTitle').textContent='🏁 종합 점검 (20문항)';
+  S.idx=0; S.score=0; S.wrong=[]; S.rev=[]; S.startAt=Date.now();
+  document.getElementById('quizTitle').textContent='🏁 종합 점검 (20문항 · 시험)';
   show('quizView'); renderQ();
 }
 
@@ -711,7 +720,8 @@ function renderQ(){
   S.answered=false;
   document.getElementById('quizCount').textContent=`문제 ${S.idx+1} / ${S.qs.length}`;
   document.getElementById('quizProg').style.width=(S.idx/S.qs.length*100)+'%';
-  document.getElementById('quizScore').textContent=S.score+'점';
+  // 시험은 진행 중 점수를 감춘다 (규약 §2)
+  document.getElementById('quizScore').textContent=isExam()?'채점은 마지막에':S.score+'점';
   document.getElementById('nextBtn').classList.add('hidden');
 
   const ansText = q.ansText!=null ? q.ansText : q.opts[q.a];
@@ -730,30 +740,56 @@ function renderQ(){
   });
 }
 
+function isExam(){ return S.mode==='exam'; }
 function answer(i, correct, ansText, q){
   if(S.answered) return;
   S.answered=true;
   const opts=[...document.querySelectorAll('#opts .opt')];
-  opts.forEach((b,bi)=>{
-    b.disabled=true;
-    const txt=b.querySelector('span:last-child').textContent;
-    if(txt===ansText) b.classList.add('ok');
-    else if(bi===i) b.classList.add('no');
-  });
+  const picked = opts[i] ? opts[i].querySelector('span:last-child').textContent : '';
+  opts.forEach(b=>b.disabled=true);
+  if(correct) S.score++;
+  // 무엇을 골라서 틀렸는지까지 남긴다 (규약 §1 ②)
+  if(!correct) S.wrong.push({q:q.q.replace(/<[^>]+>/g,''), pick:picked, ans:ansText});
   const fb=document.getElementById('fb');
-  if(correct){
-    S.score++;
-    fb.className='fb ok';
-    fb.innerHTML='✅ <b>정답!</b><br>'+q.ex;
-    toast('정답!','ok');
+  if(isExam()){
+    // 시험 — 정답 표시·해설·알림을 전부 감추고 오답노트용으로만 담아 둔다 (규약 §2)
+    (S.rev=S.rev||[]).push({no:S.idx+1, q:q.q, fig:q.fig, ex:q.ex, ok:correct, pick:picked, ans:ansText});
+    fb.className='fb';
+    fb.innerHTML='제출했어요 · 채점은 마지막에 한꺼번에 합니다';
+    document.getElementById('quizScore').textContent='채점은 마지막에';
   }else{
-    S.wrong.push({q:q.q.replace(/<[^>]+>/g,''), ans:ansText});
-    fb.className='fb no';
-    fb.innerHTML=`❌ <b>정답은 «${ansText}»</b><br>`+q.ex;
-    toast('아쉬워요','no');
+    opts.forEach((b,bi)=>{
+      const txt=b.querySelector('span:last-child').textContent;
+      if(txt===ansText) b.classList.add('ok');
+      else if(bi===i) b.classList.add('no');
+    });
+    if(correct){
+      fb.className='fb ok';
+      fb.innerHTML='✅ <b>정답!</b><br>'+q.ex;
+      toast('정답!','ok');
+    }else{
+      fb.className='fb no';
+      fb.innerHTML=`❌ <b>정답은 «${ansText}»</b><br>`+q.ex;
+      toast('아쉬워요','no');
+    }
+    document.getElementById('quizScore').textContent=S.score+'점';
   }
-  document.getElementById('quizScore').textContent=S.score+'점';
   document.getElementById('nextBtn').classList.remove('hidden');
+}
+/* 오답노트 — 시험이 끝난 뒤에야 틀린 문제를 그림·해설과 함께 펼쳐 보여준다 (규약 §2) */
+function examReview(){
+  const wrongs=(S.rev||[]).filter(r=>!r.ok);
+  if(!wrongs.length) return '<div class="wrongbox" style="color:var(--good)">틀린 문제가 없습니다! 완벽해요 🎯</div>';
+  return '<div class="wrongbox review"><h4>📝 오답노트 — 틀린 '+wrongs.length+'문제</h4>'+
+    wrongs.map(r=>
+      '<div class="rvcard">'+
+      '<div class="rvno">문제 '+r.no+'</div>'+
+      '<div class="qtext">'+r.q+'</div>'+
+      (r.fig?'<div class="qfig">'+r.fig+'</div>':'')+
+      '<div class="rvrow">내 답 — '+(r.pick||'무응답')+'</div>'+
+      '<div class="rvrow ans">정답 — '+r.ans+'</div>'+
+      (r.ex?'<div class="rvex">'+r.ex+'</div>':'')+
+      '</div>').join('')+'</div>';
 }
 document.getElementById('nextBtn').onclick=()=>{
   S.idx++;
@@ -773,10 +809,11 @@ function finish(){
   document.getElementById('rSub').textContent =
     `${S.mode==='exam'?'종합 점검':AREA[S.area].name} · 소요 시간 ${Math.floor(sec/60)}분 ${sec%60}초`;
 
-  document.getElementById('rWrong').innerHTML = S.wrong.length
-    ? `<div class="wrongbox"><h4>틀린 문제 ${S.wrong.length}개 — 다시 확인하세요</h4>
-       ${S.wrong.map(w=>`<div>• ${w.q}<br><span style="color:var(--good)">→ 정답: ${w.ans}</span></div>`).join('')}</div>`
-    : `<div class="wrongbox" style="color:var(--good)">틀린 문제가 없습니다! 완벽해요 🎯</div>`;
+  document.getElementById('rWrong').innerHTML = isExam() ? examReview()
+    : (S.wrong.length
+      ? `<div class="wrongbox"><h4>틀린 문제 ${S.wrong.length}개 — 다시 확인하세요</h4>
+         ${S.wrong.map(w=>`<div>• ${w.q}<br><span style="color:var(--good)">→ 정답: ${w.ans}</span></div>`).join('')}</div>`
+      : `<div class="wrongbox" style="color:var(--good)">틀린 문제가 없습니다! 완벽해요 🎯</div>`);
 
   // 최고 기록 저장
   const rec={correct:S.score,total:total,pct:pct};
@@ -817,7 +854,7 @@ function rcSubmit(){
   ResultCollector.open({
     score:Math.round(S.score/total*100),
     correct:S.score, total:total,
-    wrong:S.wrong.map(w=>`${w.q} → 정답: ${w.ans}`),
+    wrong:S.wrong.map(w=>`${w.q} ${w.pick||'무응답'}→${w.ans}`),
     durationSec:sec,
     mode:modeName,
     retry: ResultCollector.bumpTry ? ResultCollector.bumpTry(modeName) : undefined,
