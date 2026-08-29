@@ -640,6 +640,15 @@ function bankGeo(){
 }
 
 /* 정답 텍스트를 유지하며 보기 섞기 */
+/* 보기 순서를 섞어 '정답은 늘 A' 가 되는 유출을 막는다 (정답 유출 3원칙)
+   - 정답은 위치가 아니라 글자로만 판정하므로(answer() 가 텍스트 비교) 섞어도 채점은 그대로다
+   - 수업 모드(fixorder.js)에서는 Math.random 이 고정 시드라 모든 학생이 같은 보기 순서를 본다 */
+function normalizeQs(list){
+  return list.map(q=>{
+    const ansText = q.ansText!=null ? q.ansText : q.opts[q.a];
+    return Object.assign({}, q, {ansText:ansText, opts:shuffle(q.opts)});
+  });
+}
 function shuffleKeep(arr, ans){
   const uniq=[...new Set(arr)];
   if(!uniq.includes(ans)) uniq.push(ans);
@@ -704,7 +713,7 @@ document.getElementById('toQuizBtn').onclick=()=>fromLearnToQuiz();
 /* ================= 문제 ================= */
 function startQuiz(area){
   S.mode='area'; S.area=area;
-  S.qs=shuffle(BANK[area]()).slice(0,12);
+  S.qs=normalizeQs(shuffle(BANK[area]()).slice(0,12));
   S.idx=0; S.score=0; S.wrong=[]; S.rev=[]; S.startAt=Date.now();
   document.getElementById('quizTitle').textContent=AREA[area].ico+' '+AREA[area].name;
   show('quizView'); renderQ();
@@ -712,7 +721,7 @@ function startQuiz(area){
 function startExam(){
   S.mode='exam'; S.area=null;
   const per=[shuffle(bankSurf()).slice(0,7), shuffle(bankTol()).slice(0,7), shuffle(bankGeo()).slice(0,6)];
-  S.qs=shuffle([].concat(...per));
+  S.qs=normalizeQs(shuffle([].concat(...per)));
   S.idx=0; S.score=0; S.wrong=[]; S.rev=[]; S.startAt=Date.now();
   document.getElementById('quizTitle').textContent='🏁 종합 점검 (20문항 · 시험)';
   show('quizView'); renderQ();
@@ -825,7 +834,7 @@ function finish(){
   save();
 
   // 제출 버튼: 종합 점검 + ?rc= 링크일 때만
-  document.getElementById('rcSubmitBtn').classList.remove('hidden');
+  document.getElementById('rcSubmitBtn').classList.toggle('hidden', !(S.mode==='exam' && rcHasEndpoint()));
   document.getElementById('retryBtn').onclick=()=> S.mode==='exam'?startExam():startQuiz(S.area);
   show('resultView');
 }
