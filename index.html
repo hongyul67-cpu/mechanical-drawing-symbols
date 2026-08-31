@@ -833,8 +833,9 @@ function finish(){
   else { if(!S.best[S.area]||pct>S.best[S.area].pct) S.best[S.area]=rec; }
   save();
 
-  // 제출 버튼: 종합 점검 + ?rc= 링크일 때만
-  document.getElementById('rcSubmitBtn').classList.toggle('hidden', !(S.mode==='exam' && rcHasEndpoint()));
+  /* 제출 버튼은 ?rc= 링크가 아니어도 항상 보인다 (CONVENTIONS.md §1 ③)
+     — 숨기면 학생은 버튼이 있는 줄도 모른다. 링크가 아닐 때는 눌렀을 때 rcSubmit() 이 안내한다. */
+  document.getElementById('rcSubmitBtn').classList.remove('hidden');
   document.getElementById('retryBtn').onclick=()=> S.mode==='exam'?startExam():startQuiz(S.area);
   show('resultView');
 }
