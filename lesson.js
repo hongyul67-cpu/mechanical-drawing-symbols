@@ -12,7 +12,9 @@
      gsvg(기하공차 14종) · surfSym(표면의 결 지시 기호) · triSym(다듬질 삼각 기호) ·
      GEO · IT_TABLE · FINISH — 전부 index.html 위쪽에 있는 것이다. 여기서 다시 그리지 않는다.
      슬라이드에만 필요한 그림만 아래 「새로 그린 것」에 있다.
-   ▸ 이 도구의 그림은 어두운 바탕에 밝은 선으로 그려져 있다.
+   ▸ 그림: shared('키') 인 장은 figs.js 의 그림을 배우기 카드와 함께 쓴다(2026-09-30 그림05).
+     figs.js 그림은 흰 종이를 안에 품고 있어 어두운 그림칸에서 그대로 보인다.
+   ▸ 나머지 그림은 어두운 바탕에 밝은 선으로 그려져 있다.
      board-pro 의 그림칸도 어두우므로 흰 종이로 되돌리지 않는다 —
      되돌리면 흰 바탕에 흰 그림이 되어 아무것도 안 보인다.
    ▸ 배우기 카드 3영역 14장은 그대로 둔다. 슬라이드는 별도의 한 벌이다.
@@ -84,6 +86,8 @@ function symRow(items) {
 }
 
 var FIG = {};
+/* figs.js(배우기 카드와 같은 그림)를 쓴다 — 흰 종이가 그림 안에 들어 있어 어두운 칸에서도 보인다 */
+function shared(k) { return (window.FIG && window.FIG.has && window.FIG.has(k)) ? window.FIG.svgOf(k, { labels: false }) : '';  /* 빈칸의 답이 되는 이름표(ans)는 ? 로 */ }
 
 /* ══════════ 1. 표면 거칠기 ══════════ */
 FIG.whyRough = function () {
@@ -101,20 +105,7 @@ FIG.whyRough = function () {
   b += tx(310, 150, '용도와 기능에 맞게 적절히 다듬는 것이 핵심이다', { s: 13 });
   return S(620, 162, b);
 };
-FIG.roughKinds = function () {
-  var items = [['표면 형상 (form)', '가공물의 휨, 공작기계 안내면의 변형 때문'],
-               ['파상도 (waviness)', '기계의 진동 · 떨림 때문에 생기는 기복'],
-               ['표면 거칠기 (roughness)', '작은 간격으로 나타나는 미세한 요철']];
-  var b = '';
-  items.forEach(function (it, i) {
-    var y = 18 + i * 52, d = 'M180 ' + (y + 26), k = [1, 3, 12][i], step = [60, 26, 9][i];
-    for (var x = 0; x < 400; x += step) d += ' l' + step / 2 + ' ' + (-k) + ' l' + step / 2 + ' ' + k;
-    b += tx(14, y + 30, it[0], { s: 12.5, a: 'start', w: 700, c: HOT });
-    b += tx(14, y + 46, it[1], { s: 10.5, a: 'start', c: DIM });
-    b += pth(d, { c: [BLUE, GRN, INK][i], w: 1.8 });
-  });
-  return S(620, 176, b);
-};
+FIG.roughKinds = function () { return shared('rough-kinds'); };
 FIG.raRyRz = function () {
   var b = '', base = 78;
   var d = 'M40 ' + base;
@@ -130,17 +121,7 @@ FIG.raRyRz = function () {
   b += tx(300, 190, '단위는 모두 µm · 값이 작을수록 매끄럽다', { s: 12, c: DIM });
   return S(620, 200, b);
 };
-FIG.cutoff = function () {
-  var b = ln(40, 60, 580, 60, { c: DIM, w: 1.2 });
-  b += ln(40, 46, 40, 74, { c: BLUE, w: 2 }) + ln(220, 46, 220, 74, { c: BLUE, w: 2 });
-  b += tx(130, 40, '기준 길이', { s: 12.5, c: BLUE, w: 700 });
-  b += ln(40, 96, 580, 96, { c: GRN, w: 2 }) + ln(40, 86, 40, 106, { c: GRN, w: 2 }) + ln(580, 86, 580, 106, { c: GRN, w: 2 });
-  b += tx(310, 120, '평가 길이 · 측정 길이(이송 길이)', { s: 12.5, c: GRN, w: 700 });
-  b += tx(310, 152, '컷오프 값 — 파상도와 거칠기를 갈라내는 필터 값', { s: 13 });
-  b += tx(310, 174, '컷오프 종류 : 0.08 · 0.25 · 0.8 · 2.5 · 8 · 25 mm', { s: 12.5, c: HOT });
-  b += tx(310, 194, '실제 측정에서는 컷오프 값으로 기준 길이를 잡는다', { s: 12, c: DIM });
-  return S(620, 204, b);
-};
+FIG.cutoff = function () { return shared('lengths'); };
 FIG.finish = function () {
   var rows = (typeof FINISH !== 'undefined' ? FINISH : []).map(function (f) {
     return { svg: (typeof triSym === 'function' ? triSym(f.tri) : ''), nm: f.nm, dt: 'Ra ' + f.ra + ' · ' + f.n };
@@ -166,20 +147,7 @@ FIG.surfSyms = function () {
 };
 
 /* ══════════ 2. 표면의 결 기입 ══════════ */
-FIG.surfPos = function () {
-  var b = pth('M120 96 L150 130 L206 40 L400 40', { c: INK, w: 2.4 });
-  b += ln(206, 40, 400, 40, { c: INK, w: 2.4 });
-  b += tx(160, 34, 'a', { s: 17, w: 700, c: HOT }) + tx(280, 30, 'b', { s: 17, w: 700, c: BLUE });
-  b += tx(230, 62, 'c', { s: 15, w: 700, c: GRN }) + tx(280, 62, 'd', { s: 15, w: 700, c: GRN });
-  b += tx(330, 62, 'e', { s: 15, w: 700, c: GRN }) + tx(380, 62, 'g', { s: 15, w: 700, c: GRN });
-  var key = ['a : 산술 평균 거칠기(Ra)의 값', 'b : 가공 방법', 'c : 컷오프 값 · 평가 길이',
-             "c′: 기준 길이 · 평가 길이", 'd : 줄무늬 방향의 기호', 'e : 다듬질 여유',
-             'f : Ra 이외의 표면 거칠기 값', 'g : 표면 파상도'];
-  key.forEach(function (t, i) {
-    b += tx(430, 26 + i * 20, t, { s: 12, a: 'start', c: i < 2 ? (i ? BLUE : HOT) : INK });
-  });
-  return S(660, 196, b);
-};
+FIG.surfPos = function () { return shared('surf-pos'); };
 FIG.machineCode = function () {
   return table(640,
     [{ x: 80, label: '기호' }, { x: 200, label: '가공 방법' }, { x: 380, label: '기호' }, { x: 520, label: '가공 방법' }],
@@ -227,17 +195,7 @@ FIG.surfWhere = function () {
 };
 
 /* ══════════ 3. 치수 공차 ══════════ */
-FIG.tolTerms = function () {
-  var b = ln(60, 40, 560, 40, { c: DIM, w: 1.2, d: '5,4' }) + tx(590, 44, '기준 치수', { s: 12, a: 'end', c: DIM });
-  b += '<rect x="180" y="24" width="260" height="34" fill="#1e3a5f" stroke="' + BLUE + '" stroke-width="1.6" rx="4"/>';
-  b += ln(180, 18, 180, 66, { c: HOT, w: 2 }) + ln(440, 18, 440, 66, { c: HOT, w: 2 });
-  b += tx(180, 82, '최소 허용 치수', { s: 12, c: HOT }) + tx(440, 82, '최대 허용 치수', { s: 12, c: HOT });
-  b += ln(180, 104, 440, 104, { c: GRN, w: 2 }) + tx(310, 122, '치수 공차 = 최대 허용 − 최소 허용', { s: 13, c: GRN, w: 700 });
-  b += tx(310, 152, '위 치수 허용차 = 최대 허용 치수 − 기준 치수', { s: 12.5 });
-  b += tx(310, 172, '아래 치수 허용차 = 최소 허용 치수 − 기준 치수', { s: 12.5 });
-  b += tx(310, 194, '실 치수 — 실제로 측정한 치수. 이 범위 안에 들면 합격이다', { s: 12, c: DIM });
-  return S(620, 204, b);
-};
+FIG.tolTerms = function () { return shared('tol-terms'); };
 FIG.itGrade = function () {
   var b = tx(310, 26, 'IT 기본 공차 — IT01 · IT0 · IT1 … IT18 의 20등급', { s: 14, w: 700, c: HOT });
   var g = [['IT01 ~ IT4', '게이지 제작 공차', BLUE], ['IT5 ~ IT10', '끼워맞춤 공차', GRN],
@@ -269,18 +227,7 @@ FIG.tolMark = function () {
   b += tx(310, 186, 'g6 = 축 · IT6 등급 · 위 치수 허용차가 음수', { s: 12.5, c: DIM });
   return S(620, 196, b);
 };
-FIG.basis = function () {
-  var b = tx(160, 28, '구멍 기준식', { s: 14, w: 700, c: BLUE }) + tx(470, 28, '축 기준식', { s: 14, w: 700, c: HOT });
-  b += '<rect x="60" y="48" width="200" height="30" fill="#1e3a5f" stroke="' + BLUE + '" stroke-width="1.8" rx="4"/>';
-  b += tx(160, 68, 'H (고정)', { s: 13, w: 700, c: BLUE });
-  b += tx(160, 104, '축을 g · h · p … 로 바꾼다', { s: 12.5 });
-  b += '<rect x="370" y="48" width="200" height="30" fill="#3a2a10" stroke="' + HOT + '" stroke-width="1.8" rx="4"/>';
-  b += tx(470, 68, 'h (고정)', { s: 13, w: 700, c: HOT });
-  b += tx(470, 104, '구멍을 G · H · P … 로 바꾼다', { s: 12.5 });
-  b += tx(310, 142, '주로 쓰는 것은 구멍 기준식이다', { s: 13.5, w: 700, c: BLUE });
-  b += tx(310, 166, '구멍은 드릴·리머로 정해진 치수만 낼 수 있고, 축은 깎아 맞추기 쉽기 때문이다', { s: 11.5, c: DIM });
-  return S(620, 178, b);
-};
+FIG.basis = function () { return shared('basis'); };
 function fitPic(kind) {
   /* 구멍(사각 틀)과 축(안쪽 막대)의 크기 관계 */
   var hw = 300, sw = { clear: 250, tight: 330, mid: 300 }[kind];
@@ -302,26 +249,8 @@ FIG.fitTight = function () {
     tx(310, 122, '구멍 < 축  →  항상 죔새가 생긴다', { s: 15, w: 700, c: HOT }) +
     tx(310, 144, '분해·조립하지 않는 부품에 쓴다', { s: 12, c: DIM }));
 };
-FIG.fitMid = function () {
-  return S(620, 158, fitPic('mid') +
-    tx(310, 118, '틈새가 생길 수도, 죔새가 생길 수도 있다', { s: 15, w: 700, c: BLUE }) +
-    tx(310, 140, '최소 틈새 = 구멍 최소 − 축 최대     최대 죔새 = 축 최대 − 구멍 최소', { s: 11.5, c: DIM }));
-};
-FIG.fitCalc = function () {
-  var b = tx(310, 26, 'φ45 H7 / g6  —  φ45 는 30~50 구간이므로 IT7 = 25µm, IT6 = 16µm', { s: 12.5, c: DIM });
-  var rows = [['구멍 φ45H7', '위 +0.025 / 아래 0', '45.025 / 45.000', BLUE],
-              ['축 φ45g6', '위 −0.009 / 아래 −0.025', '44.991 / 44.975', HOT]];
-  rows.forEach(function (r, i) {
-    var y = 56 + i * 34;
-    b += tx(120, y, r[0], { s: 13, w: 700, c: r[3] }) + tx(320, y, r[1], { s: 12.5 }) +
-         tx(530, y, r[2], { s: 12.5 });
-  });
-  b += ln(20, 132, 600, 132, { c: '#3b4a60', w: 1.2 });
-  b += tx(310, 156, '최소 틈새 = 45.000 − 44.991 = 0.009', { s: 13.5, c: GRN, w: 700 });
-  b += tx(310, 180, '최대 틈새 = 45.025 − 44.975 = 0.050', { s: 13.5, c: GRN, w: 700 });
-  b += tx(310, 204, '틈새만 있고 죔새가 없다 → 헐거운 끼워맞춤', { s: 13 });
-  return S(620, 214, b);
-};
+FIG.fitMid = function () { return shared('fit-3'); };
+FIG.fitCalc = function () { return shared('fit-calc'); };
 
 /* ══════════ 5. 기하 공차 ══════════ */
 function geoCells(cat) {
@@ -331,42 +260,12 @@ function geoCells(cat) {
     return { svg: f(g.id), nm: g.nm, dt: g.desc };
   }));
 }
-FIG.geoWhy = function () {
-  var b = '<rect x="70" y="34" width="200" height="60" fill="none" stroke="' + INK + '" stroke-width="2"/>';
-  b += pth('M340 34 L540 40 L536 96 L344 92 Z', { c: HOT, w: 2 });
-  b += tx(170, 118, '치수는 맞는다', { s: 13, c: INK }) + tx(440, 118, '그런데 휘어 있다', { s: 13, c: HOT, w: 700 });
-  b += tx(310, 152, '치수 공차만으로는 모양 · 자세 · 위치 · 흔들림을 잡을 수 없다', { s: 13.5 });
-  b += tx(310, 176, '그래서 기하 공차로 따로 지시한다', { s: 12.5, c: DIM });
-  return S(620, 188, b);
-};
-FIG.geoDatum = function () {
-  var f = (typeof gsvg === 'function') ? gsvg : function () { return ''; };
-  var b = '<div class="fig"><div class="symrow">' +
-    '<div class="cell" style="min-width:150px">' + f('flat') +
-    '<div class="nm">단독 형체</div><div class="dt">데이텀이 필요 없다 (모양 공차)</div></div>' +
-    '<div class="cell" style="min-width:150px">' + f('parallel') +
-    '<div class="nm">관련 형체</div><div class="dt">데이텀이 필요하다 (자세·위치·흔들림)</div></div>' +
-    '<div class="cell" style="min-width:150px">' + f('datum') +
-    '<div class="nm">데이텀</div><div class="dt">기준이 되는 면·선. 대문자를 사각형에 넣어 표시</div></div>' +
-    '</div></div>';
-  return b;
-};
+FIG.geoWhy = function () { return shared('geo-why'); };
+FIG.geoDatum = function () { return shared('geo-datum'); };
 FIG.geoForm = function () { return geoCells(['모양']); };
 FIG.geoAttitude = function () { return geoCells(['자세', '위치']); };
 FIG.geoRunout = function () { return geoCells(['흔들림']); };
-FIG.geoFrame = function () {
-  var f = (typeof gsvg === 'function') ? gsvg : function () { return ''; };
-  var b = box(60, 30, 90, 50, { c: INK, w: 2, r: 0 }) + box(150, 30, 180, 50, { c: INK, w: 2, r: 0 }) +
-          box(330, 30, 90, 50, { c: INK, w: 2, r: 0 });
-  b += '<g transform="translate(82,32) scale(1.1)">' + f('perp', 40) + '</g>';
-  b += tx(240, 66, '0.011', { s: 24, w: 700, c: HOT }) + tx(375, 66, 'A', { s: 24, w: 700, c: BLUE });
-  b += tx(105, 100, '기호', { s: 12, c: DIM }) + tx(240, 100, '공차값', { s: 12, c: DIM }) +
-       tx(375, 100, '데이텀', { s: 12, c: DIM });
-  var key = ['φ가 붙으면 공차 영역이 원통(원) 모양', '0.008/50 — 임의의 50mm 에 대해 0.008',
-             '6x — 같은 공차를 여러 형체에 (틀 위쪽에)', '두 종류 이상이면 틀을 상하로 겹쳐 기입'];
-  key.forEach(function (t, i) { b += tx(450, 44 + i * 24, '· ' + t, { s: 12, a: 'start' }); });
-  return S(680, 116, b);
-};
+FIG.geoFrame = function () { return shared('geo-frame'); };
 
 /* ══════════════════════════════════════════════════════════════
    슬라이드 원고 — 26장 / 5단원

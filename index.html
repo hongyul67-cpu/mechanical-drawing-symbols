@@ -62,6 +62,8 @@
 
   /* ---- 배우기 카드 ---- */
   .learn{display:grid;gap:12px;}
+  .lcard .lfig{margin:6px 0 12px}
+  .lcard .lfig .fig-gallery{grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr))}
   .lcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px;}
   .lcard h4{margin:0 0 8px;font-size:15px;color:var(--accent);}
   .lcard p{margin:0 0 8px;font-size:13.5px;}
@@ -462,20 +464,6 @@ const LEARN = {
         <div class="note">윤곽도는 데이텀 없이도, 데이텀과 함께도 쓸 수 있습니다(교과서 기준 단독 형체로 분류).</div>`},
       {h:'공차 기입 틀 읽는 법', html:`
         <p>직사각형 틀을 나누어 <b>기호 → 공차값 → 데이텀</b> 순으로 기입합니다.</p>
-        <div class="qfig">
-          <svg width="230" height="52" viewBox="0 0 230 52">
-            <g fill="none" stroke="#e8ecf3" stroke-width="2">
-              <rect x="4" y="10" width="42" height="32"/>
-              <rect x="46" y="10" width="86" height="32"/>
-              <rect x="132" y="10" width="42" height="32"/>
-            </g>
-            <g transform="translate(11,3)">${gsvg('perp',30)}</g>
-            <text x="60" y="32" fill="#f59e0b" font-size="16" font-weight="700">0.011</text>
-            <text x="146" y="32" fill="#38bdf8" font-size="16" font-weight="700">A</text>
-            <text x="180" y="20" fill="#8a94a6" font-size="10">← 데이텀</text>
-            <text x="180" y="36" fill="#8a94a6" font-size="10">← 공차값</text>
-          </svg>
-        </div>
         <div class="kv">
           <b>φ가 붙으면</b><span>공차 영역이 <b>원통(원)</b> 모양임을 뜻함 (예: φ0.02)</span>
           <b>여러 공차</b><span>한 형체에 두 종류 이상이면 틀을 <b>상하로 겹쳐</b> 기입</span>
@@ -712,8 +700,15 @@ function openLearn(area){
   const L=LEARN[area];
   document.getElementById('learnTitle').textContent='📖 배우기 — '+L.title;
   document.getElementById('learnBody').innerHTML =
-    L.cards.map(c=>`<div class="lcard"><h4>${c.h}</h4>${c.html}</div>`).join('');
+    L.cards.map(c=>`<div class="lcard"><h4>${c.h}</h4>${cardFigs(c.h)}${c.html}</div>`).join('');
   show('learnView');
+}
+/* 카드 제목 바로 아래 그림 — 어느 카드에 붙는지는 figs.js 의 cards 가 정한다 (links/fig.js) */
+function cardFigs(h){
+  if(!window.FIG || !window.FIGS) return '';
+  const keys=Object.keys(FIGS).filter(k=>(FIGS[k].cards||[]).indexOf(h)>=0);
+  if(!keys.length) return '';
+  return `<div class="lfig">${keys.length===1 ? FIG.figure(keys[0]) : FIG.gallery(keys)}</div>`;
 }
 function fromLearnToQuiz(){ startQuiz(S.area); }
 document.getElementById('toQuizBtn').onclick=()=>fromLearnToQuiz();
@@ -977,6 +972,9 @@ show('home');
 <!-- 공용 기록 초기화 (교실 공용 PC용) -->
 <!-- 수업 슬라이드 — 원고(lesson.js)는 이 저장소 것, 화면(board-pro.js)은 links 의 공용 파일이다.
      저장소마다 사본을 두지 않는다. 뷰어를 고칠 일이 생기면 links 저장소에서 고친다. -->
+<!-- 그림 — 그리는 도구(fig.js)는 links 의 공용 파일, 그림 모음(figs.js)은 이 저장소 것. lesson.js 보다 먼저 -->
+<script src="https://hongyul67-cpu.github.io/links/fig.js"></script>
+<script src="figs.js"></script>
 <script src="lesson.js"></script>
 <script src="https://hongyul67-cpu.github.io/links/board-pro.js"></script>
 <script>
